@@ -1,11 +1,11 @@
 package com.conectaciudad.participacion.config;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-@Log4j2
+@Slf4j
 @Component
 public class ActiveProfileLogger implements CommandLineRunner {
 
@@ -14,6 +14,6 @@ public class ActiveProfileLogger implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        System.out.println("Spring active profile: "+ activeProfile);
+        log.info("Spring active profile: "+ activeProfile);
     }
 }
