@@ -15,7 +15,7 @@ public class ProyectoClient {
 
     public List<Object> obtenerProyectosPublicados() {
         return webClient.get()
-                .uri("https://identidad-api.onrender.com/api/v1/proyectos")
+                .uri("${api.proyectos}")
                 .retrieve()
                 .bodyToFlux(Object.class)
                 .collectList()
