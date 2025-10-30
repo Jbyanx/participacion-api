@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/participacion_db
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:1234}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  issuer: conectaciudad
+  secret: ${JWT_SECRET:clave-secreta}
+
+services:
+  grupo2:
+    base-url: https://identidad-api.onrender.com/api/v1
+  grupo1:
+    base-url: https://comunicacion-api.onrender.com/api/v1
