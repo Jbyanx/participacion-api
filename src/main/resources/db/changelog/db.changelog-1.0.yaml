@@ -1,0 +1,121 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-votaciones
+      author: jabes
+      changes:
+        - createTable:
+            tableName: votaciones
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: fecha_hora
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: decision
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hash_verificacion
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: proyecto_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ciudadano_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: votaciones
+            columnNames: ciudadano_id, proyecto_id
+            constraintName: unique_voto
+
+  - changeSet:
+      id: 2-create-auditoria-votos
+      author: jabes
+      changes:
+        - createTable:
+            tableName: auditoria_votos
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: votacion_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fecha_evento
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tipo_evento
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: descripcion
+                  type: TEXT
+              - column:
+                  name: usuario_responsable
+                  type: VARCHAR(100)
+              - column:
+                  name: hash_anterior
+                  type: VARCHAR(256)
+              - column:
+                  name: hash_nuevo
+                  type: VARCHAR(256)
+        - addForeignKeyConstraint:
+            baseTableName: auditoria_votos
+            baseColumnNames: votacion_id
+            constraintName: fk_voto
+            referencedTableName: votaciones
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 3-create-alertas-auditoria
+      author: jabes
+      changes:
+        - createTable:
+            tableName: alertas_auditoria
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: fecha_hora
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: severidad
+                  type: VARCHAR(30)
+              - column:
+                  name: mensaje
+                  type: TEXT
+              - column:
+                  name: origen
+                  type: VARCHAR(50)
