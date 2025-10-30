@@ -1,4 +1,4 @@
-package com.conectaciudad.participacion_ciudadana;
+package com.conectaciudad.participacion;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
