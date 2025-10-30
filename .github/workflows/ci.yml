@@ -1,13 +1,14 @@
 name: Java CI with Gradle
 
 on:
+  push:
+    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
-  push:
-    branches: [ "develop" ]
 
 jobs:
   build:
+    name: Gradle Build
     runs-on: ubuntu-latest
 
     steps:
