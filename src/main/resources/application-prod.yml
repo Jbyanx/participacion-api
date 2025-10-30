@@ -1,0 +1,34 @@
+server:
+  port: 0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+    hikari:
+      connection-timeout: 30000
+      validation-timeout: 5000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 500000
+      max-lifetime: 1800000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+
+
+jwt:
+  issuer: conectaciudad
+  secret: ${JWT_SECRET}
+
+services:
+  grupo2:
+    base-url: https://identidad-api.onrender.com/api/v1
+  grupo1:
+    base-url: https://comunicacion-api.onrender.com/api/v1
