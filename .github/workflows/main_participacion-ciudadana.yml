@@ -53,11 +53,13 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C57437E40076459197305C55ABD3B98B }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_23A0E4C220C64280B20369563A8E4944 }}
 
+      - name: List build output
+        run: ls -lh build/libs/
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'participacion-ciudadana'
           slot-name: 'Production'
-          package: 'build/libs/*-SNAPSHOT.jar'
-          
+          package: 'build/libs/participacion-api-0.0.1.jar'
