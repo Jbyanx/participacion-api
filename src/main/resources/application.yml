@@ -13,7 +13,7 @@ spring:
 
 jwt:
   issuer: conectaciudad
-  secret: ${JWT_SECRET:clave-secreta}
+  secret: ${JWT_SECRET}
 
 services:
   grupo2:
