@@ -37,15 +37,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-  
+      id-token: write
+      contents: read
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
+
+      - name: List downloaded artifacts
+        run: ls -lh build/libs/ || echo "No JAR found"
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -53,13 +56,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C57437E40076459197305C55ABD3B98B }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_23A0E4C220C64280B20369563A8E4944 }}
 
-      - name: List build output
-        run: ls -lh build/libs/
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'participacion-ciudadana'
           slot-name: 'Production'
-          package: 'build/libs/participacion-api-0.0.1.jar'
+          package: 'build/libs/participacion-ciudadana-0.0.1-SNAPSHOT.jar'
