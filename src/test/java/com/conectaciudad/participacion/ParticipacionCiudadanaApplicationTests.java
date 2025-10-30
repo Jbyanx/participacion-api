@@ -1,4 +1,4 @@
-package com.conectaciudad.participacion_ciudadana;
+package com.conectaciudad.participacion;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
