@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy JAR app to Azure Web App - participacion-ciudadana
 
 on:
@@ -13,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -24,14 +21,17 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Build with Gradle
+      - name: Build with Gradle (skip tests)
         run: ./gradlew clean build -x test --no-daemon
+
+      - name: Verify JAR exists
+        run: ls -lh build/libs/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: build/libs/*.jar
+          path: build/libs/participacion-ciudadana-0.0.1-SNAPSHOT.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,9 +45,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
+          path: ./app   # ⚠️ se descargará aquí
 
       - name: List downloaded artifacts
-        run: ls -lh build/libs/ || echo "No JAR found"
+        run: ls -lh ./app
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -62,4 +63,4 @@ jobs:
         with:
           app-name: 'participacion-ciudadana'
           slot-name: 'Production'
-          package: 'build/libs/participacion-ciudadana-0.0.1-SNAPSHOT.jar'
+          package: './app/participacion-ciudadana-0.0.1-SNAPSHOT.jar'
