@@ -14,6 +14,6 @@ public class ActiveProfileLogger implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("Spring active profile: "+ activeProfile);
+        System.out.println("Spring active profile: "+ activeProfile);
     }
 }
