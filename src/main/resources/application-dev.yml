@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:15432/participacion_ciudadana
+    username: postgres
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+jwt:
+  issuer: conectaciudad-dev
+  secret: local-secret-key
+services:
+  grupo2:
+    base-url: http://localhost:8081/api/v1
+  grupo1:
+    base-url: http://localhost:8082/api/v1
