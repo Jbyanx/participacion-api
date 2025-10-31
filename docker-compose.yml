@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_participacion_ciudadana
+    restart: always
+    ports:
+      - "15432:5432"  # host:container
+    environment:
+      POSTGRES_DB: participacion_ciudadana
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      TZ: America/Bogota
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d participacion_ciudadana"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:
