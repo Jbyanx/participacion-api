@@ -1,5 +1,6 @@
 package com.conectaciudad.participacion.service.client;
 
+import com.conectaciudad.participacion.dto.EstadoProyecto;
 import com.conectaciudad.participacion.dto.ProyectoDto;
 import com.conectaciudad.participacion.dto.RespuestaVotoDTO;
 import com.conectaciudad.participacion.exception.VotoInvalidoException;
@@ -42,13 +43,17 @@ class VotacionServiceImplTest {
     void registrarVoto_exitoso() {
         // Mock Proyecto activo
         ProyectoDto proyectoMock = new ProyectoDto(
-                1L, "Proyecto nuevo", "PUBLICADO",
+                1L, "Proyecto nuevo",
+                "SALVAR AL MUNDO",
+                "COLOMBIA Y SU PAISES FRONTERIZOS",
+                "budgets",
                 LocalDateTime.now().minusDays(1),
-                LocalDateTime.now().plusDays(1)
+                LocalDateTime.now().plusDays(1),
+                1L,
+                EstadoProyecto.APROBADO
         );
 
         when(proyectoClient.obtenerProyectoPorId(1L)).thenReturn(proyectoMock);
-        when(proyectoClient.existeProyecto(1L)).thenReturn(true);
         when(votacionRepository.existsByProyectoIdAndCiudadanoId(1L, 100L)).thenReturn(false);
 
         Votacion votoGuardado = new Votacion();
@@ -68,9 +73,14 @@ class VotacionServiceImplTest {
     @Test
     void registrarVoto_lanzaExcepcion_siProyectoFueraDeRango() {
         ProyectoDto proyectoExpirado = new ProyectoDto(
-                1L, "Proyecto viejo", "PUBLICADO",
-                LocalDateTime.now().minusDays(10),
-                LocalDateTime.now().minusDays(1)
+                1L, "Proyecto nuevo",
+                "SALVAR AL MUNDO",
+                "COLOMBIA Y SU PAISES FRONTERIZOS",
+                "budgets",
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1),
+                1L,
+                EstadoProyecto.APROBADO
         );
 
         when(proyectoClient.obtenerProyectoPorId(1L)).thenReturn(proyectoExpirado);
