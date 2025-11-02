@@ -22,17 +22,14 @@ public class ProyectoClient {
     }
 
     public ProyectoDto obtenerProyectoPorId(Long idProyecto) {
-        try {
-            return webClient.get()
-                    .uri("api/v1/projects/{id}", idProyecto)
-                    .retrieve()
-                    .bodyToMono(ProyectoDto.class)
-                    .block();
-        } catch (WebClientResponseException.NotFound e) {
-            throw new ProyectoNotFoundException("Proyecto " + idProyecto + " no encontrado");
-        } catch (Exception e) {
-            throw new ProyectoServiceNotAvilableException("Error consultando proyecto " + idProyecto, e);
-        }
+        return webClient.get()
+                .uri(proyectosUrl+"/api/v1/projects/"+idProyecto)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response ->
+                        response.bodyToMono(String.class).map(ProyectoServiceNotAvilableException::new)
+                )
+                .bodyToMono(ProyectoDto.class)
+                .block();
     }
 
     public List<ProyectoDto> obtenerProyectosPublicados() {
@@ -44,6 +41,18 @@ public class ProyectoClient {
                 )
                 .bodyToFlux(ProyectoDto.class)
                 .collectList()
+                .block();
+    }
+
+    public Long obtenerCiudadanoPorUsername(String ciudadanoUsername) {
+        return webClient.get()
+                .uri(proyectosUrl+"/api/v1/users/"+ciudadanoUsername)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response ->
+                        response.bodyToMono(String.class).map(ProyectoServiceNotAvilableException::new)
+                )
+                .bodyToMono(ProyectoDto.class)
+                .map(ProyectoDto::id)
                 .block();
     }
 }
