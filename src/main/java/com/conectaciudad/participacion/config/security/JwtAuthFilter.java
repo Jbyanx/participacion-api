@@ -40,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         if (jwtService.isTokenValid(token)) {
-            String username = jwtService.extractSubject(token); //subject username
+            String username = jwtService.extractSubject(token); //subject email
 
             var auth = new UsernamePasswordAuthenticationToken(
                     new User(username, "", Collections.emptyList()),
