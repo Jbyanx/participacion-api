@@ -8,7 +8,7 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
   liquibase:
     enabled: true
@@ -18,6 +18,6 @@ jwt:
   secret: ${JWT_SECRET}
 services:
   grupo2:
-    base-url: https://conecta-ciudad-api.azurewebsites.net/
+    base-url: ${BASE_URL_GRUPO_2}
   grupo1:
-    base-url: https://conecta-ciudad-api-2.azurewebsites.net/
+    base-url: ${BASE_URL_GRUPO_1}

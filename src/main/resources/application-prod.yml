@@ -21,14 +21,11 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
-
-
 jwt:
   issuer: conectaciudad
   secret: ${JWT_SECRET}
-
 services:
   grupo2:
-    base-url: https://identidad-api.onrender.com/api/v1
+    base-url: ${BASE_URL_GRUPO_2}
   grupo1:
-    base-url: https://comunicacion-api.onrender.com/api/v1
+    base-url: ${BASE_URL_GRUPO_1}
