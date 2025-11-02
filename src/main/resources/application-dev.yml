@@ -8,16 +8,16 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
 jwt:
-  issuer: conectaciudad-dev
-  secret: local-secret-key
+  issuer: conectaciudad
+  secret: ${JWT_SECRET}
 services:
   grupo2:
-    base-url: http://localhost:8081/api/v1
+    base-url: ${BASE_URL_GRUPO_2}
   grupo1:
-    base-url: http://localhost:8082/api/v1
+    base-url: ${BASE_URL_GRUPO_1}
