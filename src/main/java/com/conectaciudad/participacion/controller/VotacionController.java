@@ -2,6 +2,7 @@ package com.conectaciudad.participacion.controller;
 
 import com.conectaciudad.participacion.dto.GuardarVotoDTO;
 import com.conectaciudad.participacion.dto.RespuestaVotoDTO;
+import com.conectaciudad.participacion.dto.ResultadoVotacionDTO;
 import com.conectaciudad.participacion.dto.VotoDetailDTO;
 import com.conectaciudad.participacion.exception.CiudadanoNotFoundException;
 import com.conectaciudad.participacion.service.client.ProyectoClient;
@@ -59,5 +60,12 @@ public class VotacionController {
     public ResponseEntity<VotoDetailDTO> verVoto(@PathVariable Long votacionId){
         return ResponseEntity.ok(votacionService.obtenerVoto(votacionId));
     }
+
+    @GetMapping("/{idProyecto}/resultados")
+    public ResponseEntity<ResultadoVotacionDTO> obtenerResultados(@PathVariable Long idProyecto) {
+        ResultadoVotacionDTO resultado = votacionService.obtenerResultadosPorProyecto(idProyecto);
+        return ResponseEntity.ok(resultado);
+    }
+
 
 }
