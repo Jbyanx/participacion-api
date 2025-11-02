@@ -6,13 +6,12 @@ import java.time.LocalDateTime;
 public record ProyectoDto(
         Long id,
         String name,
-        String estado,
         String objectives,
         String beneficiaryPopulations,
         String budgets,
         LocalDateTime startAt,
         LocalDateTime endAt,
         Long creator, //creator user id
-        ProjectStatus status
+        EstadoProyecto status
 ) implements Serializable {
 }
