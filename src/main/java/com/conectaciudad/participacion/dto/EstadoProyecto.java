@@ -1,6 +1,6 @@
 package com.conectaciudad.participacion.dto;
 
-public enum ProjectStatus {
+public enum EstadoProyecto {
     PENDIENTE("Pendiente de revisión"),
     EN_REVISION("En revisión"),
     OBSERVACIONES("Devuelto con observaciones"),
@@ -11,7 +11,7 @@ public enum ProjectStatus {
 
     private final String description;
 
-    ProjectStatus(String description) {
+    EstadoProyecto(String description) {
         this.description = description;
     }
 
