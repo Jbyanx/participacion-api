@@ -18,4 +18,5 @@ public interface VotacionRepository extends JpaRepository<Votacion, Long> {
     // Contar votos positivos y negativos (usado en estadísticas)
     long countByProyectoIdAndDecisionTrue(Long proyectoId);
     long countByProyectoIdAndDecisionFalse(Long proyectoId);
+    boolean existsByProyectoIdAndCiudadanoId(Long proyectoId, Long ciudadanoId);
 }
