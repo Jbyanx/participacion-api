@@ -29,30 +29,27 @@ public class VotacionController {
     public ResponseEntity<RespuestaVotoDTO> votar(
             @PathVariable Long idProyecto,
             @RequestBody GuardarVotoDTO votoRequest,
-            Authentication auth,
+            Authentication authentication,
             UriComponentsBuilder uriComponentsBuilder) {
 
-        //Extraer ID del ciudadano del token
-        String ciudadanoUsername = auth.getPrincipal().toString();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new RuntimeException("No se encontró autenticación válida. Asegúrate de enviar el token Bearer.");
+        }
 
-        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(ciudadanoUsername)
-                .describeConstable().orElseThrow(() -> new CiudadanoNotFoundException(
-                        "El ciudadano con usuario " + ciudadanoUsername + " no se encuentra registrado"));
+        String ciudadanoUsername = authentication.getPrincipal().toString(); //el username es el email en realidad
+        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(ciudadanoUsername);
 
-
-        //Registrar voto
         RespuestaVotoDTO respuesta = votacionService.registrarVoto(
                 idProyecto,
                 votoRequest.decision(),
                 ciudadanoId
         );
 
-        // Construir URI del recurso recién creado
         URI location = uriComponentsBuilder
                 .path("/votaciones/{id}")
                 .buildAndExpand(respuesta.idVoto())
                 .toUri();
-        // Responder con 201 Created y el cuerpo con información del voto
+
         return ResponseEntity.created(location).body(respuesta);
     }
 
@@ -67,5 +64,10 @@ public class VotacionController {
         return ResponseEntity.ok(resultado);
     }
 
-
+    @GetMapping("/{idProyecto}/mis-votos")
+    public ResponseEntity<VotoDetailDTO> obtenerMiVoto(@PathVariable Long idProyecto, Authentication auth) {
+        String username = auth.getName();
+        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(username);
+        return ResponseEntity.ok(votacionService.obtenerVotoPorCiudadanoYProyecto(ciudadanoId, idProyecto));
+    }
 }
