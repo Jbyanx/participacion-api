@@ -6,7 +6,7 @@ import com.conectaciudad.participacion.dto.RespuestaVotoDTO;
 import com.conectaciudad.participacion.exception.VotoInvalidoException;
 import com.conectaciudad.participacion.mapper.VotacionMapper;
 import com.conectaciudad.participacion.model.Votacion;
-import com.conectaciudad.participacion.repository.AuditoriaRepository;
+import com.conectaciudad.participacion.repository.AuditoriaVotoRepository;
 import com.conectaciudad.participacion.repository.VotacionRepository;
 import com.conectaciudad.participacion.service.impl.VotacionServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class VotacionServiceImplTest {
     private VotacionRepository votacionRepository;
 
     @Mock
-    private AuditoriaRepository auditoriaRepository;
+    private AuditoriaVotoRepository auditoriaVotoRepository;
 
     @Mock
     private ProyectoClient proyectoClient;
