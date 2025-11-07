@@ -7,7 +7,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
     @Bean
-    public WebClient webClient() {
-        return WebClient.create();
+    public WebClient webClient(WebClient.Builder builder) {
+        return builder
+                .defaultHeader("Accept", "application/json")
+                .build();
     }
 }
