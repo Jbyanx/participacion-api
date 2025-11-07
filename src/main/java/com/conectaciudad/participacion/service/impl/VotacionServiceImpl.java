@@ -5,7 +5,7 @@ import com.conectaciudad.participacion.exception.*;
 import com.conectaciudad.participacion.mapper.VotacionMapper;
 import com.conectaciudad.participacion.model.AuditoriaVoto;
 import com.conectaciudad.participacion.model.Votacion;
-import com.conectaciudad.participacion.repository.AuditoriaVotoRepository;
+import com.conectaciudad.participacion.repository.AuditoriaRepository;
 import com.conectaciudad.participacion.repository.VotacionRepository;
 import com.conectaciudad.participacion.service.VotacionService;
 import com.conectaciudad.participacion.service.client.ProyectoClient;
@@ -27,7 +27,7 @@ public class VotacionServiceImpl implements VotacionService {
     private final VotacionRepository votacionRepository;
     private final VotacionMapper votacionMapper;
     private final ProyectoClient proyectoClient;
-    private final AuditoriaVotoRepository auditoriaVotoRepository;
+    private final AuditoriaRepository auditoriaRepository;
     private final Logger logger = LoggerFactory.getLogger(VotacionServiceImpl.class);
 
     public VotoDetailDTO obtenerVoto(Long votacionId) {
@@ -92,7 +92,7 @@ public class VotacionServiceImpl implements VotacionService {
         auditoria.setUsuarioResponsable(String.valueOf(ciudadanoId));
         auditoria.setHashNuevo(hash);
 
-        auditoriaVotoRepository.save(auditoria);
+        auditoriaRepository.save(auditoria);
 
         // Retornar respuesta
         return new RespuestaVotoDTO(
