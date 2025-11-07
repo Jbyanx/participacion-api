@@ -29,6 +29,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.liquibase:liquibase-core:4.33.0")
 	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+
 
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
