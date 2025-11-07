@@ -1,25 +1,21 @@
 package com.conectaciudad.participacion.service.client;
 
-import com.conectaciudad.participacion.exception.ProyectoNotFoundException;
 import com.conectaciudad.participacion.exception.ProyectoServiceNotAvilableException;
 import com.conectaciudad.participacion.dto.ProyectoDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProyectoClient {
     private final WebClient webClient;
     @Value("${services.grupo2.base-url}")
     private String proyectosUrl;
-
-    public ProyectoClient(WebClient webClient) {
-        this.webClient = webClient;
-    }
 
     public ProyectoDto obtenerProyectoPorId(Long idProyecto) {
         return webClient.get()
