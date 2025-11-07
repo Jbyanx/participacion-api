@@ -4,7 +4,8 @@ import com.conectaciudad.participacion.dto.AlertaAuditoriaDTO;
 import com.conectaciudad.participacion.dto.VotoDetailDTO;
 import com.conectaciudad.participacion.mapper.VotacionMapper;
 import com.conectaciudad.participacion.model.AlertaAuditoria;
-import com.conectaciudad.participacion.repository.AuditoriaRepository;
+import com.conectaciudad.participacion.repository.AlertaAuditoriaRepository;
+import com.conectaciudad.participacion.repository.AuditoriaVotoRepository;
 import com.conectaciudad.participacion.repository.VotacionRepository;
 import com.conectaciudad.participacion.service.AuditoriaService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuditoriaServiceImpl implements AuditoriaService {
 
-    private final AuditoriaRepository auditoriaRepository;
+    private final AuditoriaVotoRepository auditoriaVotoRepository;
+    private final AlertaAuditoriaRepository alertaAuditoriaRepository;
     private final VotacionRepository votacionRepository;
     private final VotacionMapper votacionMapper;
 
@@ -51,7 +53,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
         alerta.setIpOrigen(alertaDTO.ipOrigen());
         alerta.setRevisada(false);
 
-        auditoriaRepository.save(alerta);
+        alertaAuditoriaRepository.save(alerta);
 
         return new AlertaAuditoriaDTO(
                 alerta.getId(),
@@ -70,7 +72,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 
     @Override
     public List<AlertaAuditoriaDTO> listarAlertas() {
-        return auditoriaRepository.findAll().stream()
+        return alertaAuditoriaRepository.findAll().stream()
                 .map(a -> new AlertaAuditoriaDTO(
                         a.getId(),
                         a.getIdProyecto(),
