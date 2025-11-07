@@ -37,7 +37,7 @@ public class VotacionController {
         }
 
         String ciudadanoUsername = authentication.getPrincipal().toString(); //el username es el email en realidad
-        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(ciudadanoUsername);
+        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(ciudadanoUsername).id();
 
         RespuestaVotoDTO respuesta = votacionService.registrarVoto(
                 idProyecto,
@@ -67,7 +67,7 @@ public class VotacionController {
     @GetMapping("/{idProyecto}/mis-votos")
     public ResponseEntity<VotoDetailDTO> obtenerMiVoto(@PathVariable Long idProyecto, Authentication auth) {
         String username = auth.getName();
-        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(username);
+        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(username).id();
         return ResponseEntity.ok(votacionService.obtenerVotoPorCiudadanoYProyecto(ciudadanoId, idProyecto));
     }
 }

@@ -1,6 +1,7 @@
 package com.conectaciudad.participacion.service.client;
 
 import com.conectaciudad.participacion.dto.ProyectoDto;
+import com.conectaciudad.participacion.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,5 +25,5 @@ public interface ProyectoClient {
 
     // Obtener ID de ciudadano por username
     @GetMapping("/users/{ciudadanoUsername}")
-    ProyectoDto obtenerCiudadanoPorUsername(@PathVariable("ciudadanoUsername") String ciudadanoUsername);
+    UserDto obtenerCiudadanoPorUsername(@PathVariable("ciudadanoUsername") String ciudadanoUsername);
 }
