@@ -1,54 +1,28 @@
 package com.conectaciudad.participacion.service.client;
 
-import com.conectaciudad.participacion.exception.ProyectoServiceNotAvilableException;
 import com.conectaciudad.participacion.dto.ProyectoDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ProyectoClient {
-    private final WebClient webClient;
-    @Value("${services.grupo2.base-url}")
-    private String proyectosUrl;
+@FeignClient(
+        name = "proyectoClient",
+        url = "${services.grupo2.base-url}", // se lee desde application.yml o .env
+        path = "/api/v1"
+)
+public interface ProyectoClient {
 
-    public ProyectoDto obtenerProyectoPorId(Long idProyecto) {
-        return webClient.get()
-                .uri(proyectosUrl+"/api/v1/projects/"+idProyecto)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, response ->
-                        response.bodyToMono(String.class).map(ProyectoServiceNotAvilableException::new)
-                )
-                .bodyToMono(ProyectoDto.class)
-                .block();
-    }
+    // Obtener proyecto por ID
+    @GetMapping("/projects/{idProyecto}")
+    ProyectoDto obtenerProyectoPorId(@PathVariable("idProyecto") Long idProyecto);
 
-    public List<ProyectoDto> obtenerProyectosPublicados() {
-        return webClient.get()
-                .uri(proyectosUrl+"/api/v1/projects")//solo ADMIN
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, response ->
-                        response.bodyToMono(String.class).map(ProyectoServiceNotAvilableException::new)
-                )
-                .bodyToFlux(ProyectoDto.class)
-                .collectList()
-                .block();
-    }
+    // Listar todos los proyectos (solo admin)
+    @GetMapping("/projects")
+    List<ProyectoDto> obtenerProyectosPublicados();
 
-    public Long obtenerCiudadanoPorUsername(String ciudadanoUsername) {
-        return webClient.get()
-                .uri(proyectosUrl+"/api/v1/users/"+ciudadanoUsername)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, response ->
-                        response.bodyToMono(String.class).map(ProyectoServiceNotAvilableException::new)
-                )
-                .bodyToMono(ProyectoDto.class)
-                .map(ProyectoDto::id)
-                .block();
-    }
+    // Obtener ID de ciudadano por username
+    @GetMapping("/users/{ciudadanoUsername}")
+    ProyectoDto obtenerCiudadanoPorUsername(@PathVariable("ciudadanoUsername") String ciudadanoUsername);
 }
