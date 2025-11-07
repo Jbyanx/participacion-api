@@ -1,8 +1,6 @@
 package com.conectaciudad.participacion.service.impl;
 
-import com.conectaciudad.participacion.dto.ProyectoDto;
-import com.conectaciudad.participacion.dto.RespuestaVotoDTO;
-import com.conectaciudad.participacion.dto.VotoDetailDTO;
+import com.conectaciudad.participacion.dto.*;
 import com.conectaciudad.participacion.exception.*;
 import com.conectaciudad.participacion.mapper.VotacionMapper;
 import com.conectaciudad.participacion.model.AuditoriaVoto;
@@ -114,4 +112,40 @@ public class VotacionServiceImpl implements VotacionService {
             throw new IllegalStateException("Error generando hash de verificación", e);
         }
     }
+
+    @Override
+    public ResultadoVotacionDTO obtenerResultadosPorProyecto(Long idProyecto) {
+        ProyectoDto proyecto = proyectoClient.obtenerProyectoPorId(idProyecto); //lanza excepcion si no existe
+
+        if (!proyecto.status().equals(EstadoProyecto.PUBLICADO) &&
+                !proyecto.status().equals(EstadoProyecto.APROBADO) &&
+                !proyecto.status().equals(EstadoProyecto.LISTO_PARA_PUBLICAR)) {
+            throw new VotoInvalidoException(
+                    "No se pueden consultar resultados para un proyecto en estado: " + proyecto.status()
+            );
+        }
+
+        long votosAFavor = votacionRepository.countByProyectoIdAndDecisionTrue(idProyecto);
+        long votosEnContra = votacionRepository.countByProyectoIdAndDecisionFalse(idProyecto);
+        long total = votosAFavor + votosEnContra;
+
+        double porcentajeAFavor = total > 0 ? (votosAFavor * 100.0 / total) : 0;
+        double porcentajeEnContra = total > 0 ? (votosEnContra * 100.0 / total) : 0;
+
+        return new ResultadoVotacionDTO(
+                idProyecto,
+                votosAFavor,
+                votosEnContra,
+                porcentajeAFavor,
+                porcentajeEnContra
+        );
+    }
+
+    @Override
+    public VotoDetailDTO obtenerVotoPorCiudadanoYProyecto(Long ciudadanoId, Long idProyecto) {
+        Votacion votacion = votacionRepository.findByCiudadanoIdAndProyectoId(ciudadanoId, idProyecto)
+                .orElseThrow(() -> new VotacionNotFoundException("no existe un voto para ese ciudadano y ese proyecto"));
+        return votacionMapper.toVotoDetail(votacion);
+    }
+
 }
