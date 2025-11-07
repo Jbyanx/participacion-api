@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -28,7 +29,7 @@ public class JwtService {
     public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
-                .requireIssuer(issuer)
+                //.requireIssuer(issuer) el grupo 2 no firma con issuer explicito
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -46,6 +47,19 @@ public class JwtService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        Object rolesObj = claims.get("roles");
+
+        if (rolesObj instanceof List<?> list) {
+            return list.stream()
+                    .map(Object::toString)
+                    .toList();
+        }
+
+        return List.of(); // vacío si no hay roles
     }
 
     public String extractSubject(String token) {
