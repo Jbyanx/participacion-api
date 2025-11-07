@@ -19,10 +19,18 @@ public class AlertaAuditoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime fechaHora;
+    private Long idProyecto;
+    private String tipo;           // INFO, ADVERTENCIA, ERROR
+    private String descripcion;
 
-    private String severidad; // ALTA, MEDIA, BAJA
-    private String mensaje;
-    private String origen; // API, BD, USUARIO, etc.
+    private LocalDateTime fechaRegistro;
+
+    // 🔹 Campos adicionales para robustez
+    private String severidad;      // ALTA, MEDIA, BAJA
+    private String origen;         // API, VOTACION, PARTICIPACION, etc.
+    private String usuario;        // responsable (opcional)
+    private String accion;         // acción realizada (ej. CREAR_VOTO)
+    private String ipOrigen;       // opcional
+    private boolean revisada = false;
 }
 
