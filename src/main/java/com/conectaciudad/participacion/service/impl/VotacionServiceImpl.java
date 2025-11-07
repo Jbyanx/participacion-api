@@ -5,7 +5,7 @@ import com.conectaciudad.participacion.exception.*;
 import com.conectaciudad.participacion.mapper.VotacionMapper;
 import com.conectaciudad.participacion.model.AuditoriaVoto;
 import com.conectaciudad.participacion.model.Votacion;
-import com.conectaciudad.participacion.repository.AuditoriaRepository;
+import com.conectaciudad.participacion.repository.AuditoriaVotoRepository;
 import com.conectaciudad.participacion.repository.VotacionRepository;
 import com.conectaciudad.participacion.service.VotacionService;
 import com.conectaciudad.participacion.service.client.ProyectoClient;
@@ -27,7 +27,7 @@ public class VotacionServiceImpl implements VotacionService {
     private final VotacionRepository votacionRepository;
     private final VotacionMapper votacionMapper;
     private final ProyectoClient proyectoClient;
-    private final AuditoriaRepository auditoriaRepository;
+    private final AuditoriaVotoRepository auditoriaVotoRepository;
     private final Logger logger = LoggerFactory.getLogger(VotacionServiceImpl.class);
 
     public VotoDetailDTO obtenerVoto(Long votacionId) {
@@ -92,7 +92,7 @@ public class VotacionServiceImpl implements VotacionService {
         auditoria.setUsuarioResponsable(String.valueOf(ciudadanoId));
         auditoria.setHashNuevo(hash);
 
-        auditoriaRepository.save(auditoria);
+        auditoriaVotoRepository.save(auditoria);
 
         // Retornar respuesta
         return new RespuestaVotoDTO(
@@ -139,6 +139,13 @@ public class VotacionServiceImpl implements VotacionService {
                 porcentajeAFavor,
                 porcentajeEnContra
         );
+    }
+
+    @Override
+    public VotoDetailDTO obtenerVotoPorCiudadanoYProyecto(Long ciudadanoId, Long idProyecto) {
+        Votacion votacion = votacionRepository.findByCiudadanoIdAndProyectoId(ciudadanoId, idProyecto)
+                .orElseThrow(() -> new VotacionNotFoundException("no existe un voto para ese ciudadano y ese proyecto"));
+        return votacionMapper.toVotoDetail(votacion);
     }
 
 }
