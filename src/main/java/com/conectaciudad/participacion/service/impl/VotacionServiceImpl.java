@@ -39,19 +39,21 @@ public class VotacionServiceImpl implements VotacionService {
     @Override
     @Transactional
     public RespuestaVotoDTO registrarVoto(Long idProyecto, boolean decision, Long ciudadanoId) {
-        logger.debug("Registrando voto de la ciudadano");
+        logger.debug("Registrando voto del ciudadano {}", ciudadanoId);
 
+        // 1. Validar que el proyecto existe
         ProyectoDto proyecto;
         try {
             proyecto = proyectoClient.obtenerProyectoPorId(idProyecto);
         } catch (Exception e) {
-            logger.error("proyecto no encontrado");
-            throw new ProyectoNotFoundException("proyecto no encontrado");
+            logger.error("Proyecto {} no encontrado", idProyecto, e);
+            throw new ProyectoNotFoundException("Proyecto no encontrado");
         }
 
-        logger.debug("proyecto encontrado");
-        LocalDateTime ahora = LocalDateTime.now();
+        logger.debug("Proyecto {} encontrado con estado: {}", idProyecto, proyecto.status());
 
+        // 2. Validar ventana de votación
+        LocalDateTime ahora = LocalDateTime.now();
 
         if (ahora.isBefore(proyecto.startAt())) {
             throw new VotoInvalidoException("La votación aún no ha comenzado para este proyecto.");
@@ -61,13 +63,13 @@ public class VotacionServiceImpl implements VotacionService {
             throw new VotoInvalidoException("El periodo de votación ya finalizó para este proyecto.");
         }
 
-        // Verificar si el ciudadano ya votó ese proyecto
+        // 3. Verificar si el ciudadano ya votó ese proyecto
         boolean yaVoto = votacionRepository.existsByProyectoIdAndCiudadanoId(idProyecto, ciudadanoId);
         if (yaVoto) {
             throw new VotoDuplicadoException("El ciudadano ya emitió su voto para este proyecto");
         }
 
-        // Crear nueva votación
+        // 4. Crear nueva votación
         Votacion voto = Votacion.builder()
                 .ciudadanoId(ciudadanoId)
                 .proyectoId(idProyecto)
@@ -75,15 +77,16 @@ public class VotacionServiceImpl implements VotacionService {
                 .fechaHora(LocalDateTime.now())
                 .build();
 
-        // Generar hash de integridad
+        // 5. Generar hash de integridad
         String raw = ciudadanoId + "|" + idProyecto + "|" + voto.getFechaHora() + "|" + decision;
         String hash = generarHash(raw);
         voto.setHashVerificacion(hash);
 
-        // Guardar voto
+        // 6. Guardar voto
         Votacion votoGuardado = votacionRepository.save(voto);
+        logger.info("Voto {} guardado exitosamente", votoGuardado.getId());
 
-        // Registrar auditoría
+        // 7. Registrar auditoría
         AuditoriaVoto auditoria = new AuditoriaVoto();
         auditoria.setVotacion(votoGuardado);
         auditoria.setFechaEvento(LocalDateTime.now());
@@ -91,16 +94,44 @@ public class VotacionServiceImpl implements VotacionService {
         auditoria.setDescripcion("Voto registrado correctamente.");
         auditoria.setUsuarioResponsable(String.valueOf(ciudadanoId));
         auditoria.setHashNuevo(hash);
-
         auditoriaVotoRepository.save(auditoria);
 
-        // Retornar respuesta
+        // 8. 🆕 NUEVO: Notificar al Grupo 2 sobre la acción de participación
+        notificarAccionParticipacion(idProyecto, ciudadanoId, decision, voto.getFechaHora());
+
+        // 9. Retornar respuesta
         return new RespuestaVotoDTO(
                 votoGuardado.getId(),
                 decision,
                 "Voto registrado correctamente.",
                 ciudadanoId
         );
+    }
+
+    /**
+     * Notifica al sistema del Grupo 2 sobre la acción de participación.
+     * No lanza excepción si falla, solo registra el error.
+     */
+    private void notificarAccionParticipacion(Long idProyecto, Long ciudadanoId, boolean decision, LocalDateTime fechaHora) {
+        try {
+            AccionCiudadanaRequest accion = new AccionCiudadanaRequest(
+                    idProyecto,
+                    ciudadanoId,
+                    "VOTE",
+                    decision ? "A_FAVOR" : "EN_CONTRA",
+                    fechaHora
+            );
+
+            proyectoClient.registrarAccionCiudadana(accion);
+            logger.info("Acción de participación notificada al Grupo 2 para proyecto {} y ciudadano {}",
+                    idProyecto, ciudadanoId);
+
+        } catch (Exception e) {
+            // No fallar el voto si no se puede notificar al Grupo 2
+            logger.warn("No se pudo notificar la acción de participación al Grupo 2. " +
+                            "Proyecto: {}, Ciudadano: {}. Error: {}",
+                    idProyecto, ciudadanoId, e.getMessage());
+        }
     }
 
     private String generarHash(String contenido) {
@@ -147,5 +178,4 @@ public class VotacionServiceImpl implements VotacionService {
                 .orElseThrow(() -> new VotacionNotFoundException("no existe un voto para ese ciudadano y ese proyecto"));
         return votacionMapper.toVotoDetail(votacion);
     }
-
 }
