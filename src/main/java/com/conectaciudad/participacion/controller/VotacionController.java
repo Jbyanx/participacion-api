@@ -32,13 +32,10 @@ public class VotacionController {
             Authentication authentication,
             UriComponentsBuilder uriComponentsBuilder) {
 
-        String ciudadanoUsername = authentication.getPrincipal().toString(); //el username es el email en realidad
-        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(ciudadanoUsername).id();
-
         RespuestaVotoDTO respuesta = votacionService.registrarVoto(
                 idProyecto,
                 votoRequest.decision(),
-                ciudadanoId
+                authentication
         );
 
         URI location = uriComponentsBuilder
@@ -62,8 +59,6 @@ public class VotacionController {
 
     @GetMapping("/{idProyecto}/mis-votos")
     public ResponseEntity<VotoDetailDTO> obtenerMiVoto(@PathVariable Long idProyecto, Authentication auth) {
-        String username = auth.getName();
-        Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(username).id();
-        return ResponseEntity.ok(votacionService.obtenerVotoPorCiudadanoYProyecto(ciudadanoId, idProyecto));
+        return ResponseEntity.ok(votacionService.obtenerVotoPorCiudadanoYProyecto(auth, idProyecto));
     }
 }
