@@ -32,10 +32,6 @@ public class VotacionController {
             Authentication authentication,
             UriComponentsBuilder uriComponentsBuilder) {
 
-        if (authentication == null || authentication.getPrincipal() == null) {
-            throw new RuntimeException("No se encontró autenticación válida. Asegúrate de enviar el token Bearer.");
-        }
-
         String ciudadanoUsername = authentication.getPrincipal().toString(); //el username es el email en realidad
         Long ciudadanoId = proyectoClient.obtenerCiudadanoPorUsername(ciudadanoUsername).id();
 
