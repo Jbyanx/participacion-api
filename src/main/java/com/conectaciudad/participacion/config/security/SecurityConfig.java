@@ -35,7 +35,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/votaciones/**", "/auditorias/**").permitAll()//temporal
+                        .requestMatchers("/votaciones/**", "/auditorias/**").authenticated()//temporal
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
