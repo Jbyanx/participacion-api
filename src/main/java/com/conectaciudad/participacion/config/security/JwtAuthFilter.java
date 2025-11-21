@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             var auth = new UsernamePasswordAuthenticationToken(
                     username, //solo el username(email) es el principal en nuestro dominio
-                    null,
+                    token,
                     authorities
             );
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
