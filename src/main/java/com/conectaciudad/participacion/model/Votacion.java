@@ -31,6 +31,9 @@ public class Votacion {
     @Column(nullable = false, unique = true)
     private String hashVerificacion;
 
+    @Column(nullable = false)
+    private boolean fraudulento = false; // Por defecto es legítimo
+
     @Column(name = "proyecto_id", nullable = false)
     private Long proyectoId; // Referencia externa al grupo 2
 
