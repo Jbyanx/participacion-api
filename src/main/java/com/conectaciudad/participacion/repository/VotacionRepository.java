@@ -19,4 +19,8 @@ public interface VotacionRepository extends JpaRepository<Votacion, Long> {
     long countByProyectoIdAndDecisionTrue(Long proyectoId);
     long countByProyectoIdAndDecisionFalse(Long proyectoId);
     boolean existsByProyectoIdAndCiudadanoId(Long proyectoId, Long ciudadanoId);
+
+    // MÉTODOS A PRUEBA DEL FRAUDE
+    long countByProyectoIdAndDecisionTrueAndFraudulentoFalse(Long proyectoId);
+    long countByProyectoIdAndDecisionFalseAndFraudulentoFalse(Long proyectoId);
 }
