@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4-add-robustness-columns-alertas-fixed
+      author: jabes
+      changes:
+        # 1. Renombrar 'fecha_hora' a 'fecha_registro'
+        - renameColumn:
+            tableName: alertas_auditoria
+            oldColumnName: fecha_hora
+            newColumnName: fecha_registro
+            columnDataType: TIMESTAMP
+
+        # 2. Renombrar 'mensaje' a 'descripcion'
+        - renameColumn:
+            tableName: alertas_auditoria
+            oldColumnName: mensaje
+            newColumnName: descripcion
+            columnDataType: TEXT
+
+        # 3. Agregar las columnas nuevas que faltan
+        - addColumn:
+            tableName: alertas_auditoria
+            columns:
+              - column:
+                  name: id_proyecto
+                  type: BIGINT
+              - column:
+                  name: tipo
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: usuario
+                  type: VARCHAR(100)
+              - column:
+                  name: accion
+                  type: VARCHAR(100)
+              - column:
+                  name: ip_origen
+                  type: VARCHAR(50)
+              - column:
+                  name: revisada
+                  type: BOOLEAN
+                  defaultValueBoolean: false
