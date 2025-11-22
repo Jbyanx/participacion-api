@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +26,7 @@ public class VotacionController {
     private final VotacionServiceImpl votacionService;
     private final Logger logger = LoggerFactory.getLogger(VotacionController.class);
 
+    @PreAuthorize("hasRole('CIUDADANO')")
     @PostMapping("/{idProyecto}")
     public ResponseEntity<RespuestaVotoDTO> votar(
             @PathVariable Long idProyecto,
@@ -46,17 +48,20 @@ public class VotacionController {
         return ResponseEntity.created(location).body(respuesta);
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'CURADOR')")
     @GetMapping("/{votacionId}")
     public ResponseEntity<VotoDetailDTO> verVoto(@PathVariable Long votacionId){
         return ResponseEntity.ok(votacionService.obtenerVoto(votacionId));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{idProyecto}/resultados")
     public ResponseEntity<ResultadoVotacionDTO> obtenerResultados(@PathVariable Long idProyecto) {
         ResultadoVotacionDTO resultado = votacionService.obtenerResultadosPorProyecto(idProyecto);
         return ResponseEntity.ok(resultado);
     }
 
+    @PreAuthorize("hasRole('CIUDADANO')")
     @GetMapping("/{idProyecto}/mis-votos")
     public ResponseEntity<VotoDetailDTO> obtenerMiVoto(@PathVariable Long idProyecto, Authentication auth) {
         return ResponseEntity.ok(votacionService.obtenerVotoPorCiudadanoYProyecto(auth, idProyecto));

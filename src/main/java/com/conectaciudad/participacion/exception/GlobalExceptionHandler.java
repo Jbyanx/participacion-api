@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 
 import java.time.LocalDateTime;
 
@@ -24,11 +26,41 @@ public class GlobalExceptionHandler {
         ApiError error = new ApiError(
                 LocalDateTime.now(),
                 status.value(),
-                status.getReasonPhrase(),
+                status.getReasonPhrase(), // Ej: "Forbidden", "Unauthorized"
                 message,
                 request.getRequestURI()
         );
         return ResponseEntity.status(status).body(error);
+    }
+
+    // --------------------------
+    // SEGURIDAD
+    // --------------------------
+
+    // ERROR 403: Usuario logueado pero sin rol para la accion (Ej: Ciudadano intentando auditar)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDeniedException(
+            AccessDeniedException ex,
+            HttpServletRequest request
+    ) {
+        return buildError(
+                HttpStatus.FORBIDDEN,
+                "Acceso Denegado: No tienes los permisos necesarios (Rol insuficiente) para realizar esta acción.",
+                request
+        );
+    }
+
+    // ERROR 401: Token inválido, expirado o faltante
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(
+            AuthenticationException ex,
+            HttpServletRequest request
+    ) {
+        return buildError(
+                HttpStatus.UNAUTHORIZED,
+                "No Autorizado: Debes iniciar sesión para acceder a este recurso.",
+                request
+        );
     }
 
     // --------------------------
@@ -148,7 +180,7 @@ public class GlobalExceptionHandler {
     }
 
     // --------------------------
-    // FALLBACK (cualquier otro error)
+    // FALLBACK
     // --------------------------
 
     @ExceptionHandler(RuntimeException.class)
