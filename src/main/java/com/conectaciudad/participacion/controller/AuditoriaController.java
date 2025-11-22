@@ -5,6 +5,7 @@ import com.conectaciudad.participacion.service.AuditoriaService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/auditorias")
 @RequiredArgsConstructor
+// BLOQUEO NIVEL CLASE: Solo Admins o curadores entran aquí
+@PreAuthorize("hasAnyRole('ADMINISTRADOR', 'CURADOR')")
 public class AuditoriaController {
 
     private final AuditoriaService auditoriaService;
