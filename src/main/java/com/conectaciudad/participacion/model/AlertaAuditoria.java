@@ -1,10 +1,7 @@
 package com.conectaciudad.participacion.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -19,18 +16,23 @@ public class AlertaAuditoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "id_proyecto") // Mapeo explícito
     private Long idProyecto;
-    private String tipo;           // INFO, ADVERTENCIA, ERROR
+
+    private String tipo;
     private String descripcion;
 
+    @Column(name = "fecha_registro") // Mapeo de fecha_hora a fecha_registro
     private LocalDateTime fechaRegistro;
 
-    // 🔹 Campos adicionales para robustez
-    private String severidad;      // ALTA, MEDIA, BAJA
-    private String origen;         // API, VOTACION, PARTICIPACION, etc.
-    private String usuario;        // responsable (opcional)
-    private String accion;         // acción realizada (ej. CREAR_VOTO)
-    private String ipOrigen;       // opcional
+    // changeSet 4
+    private String severidad;
+    private String origen;
+    private String usuario;
+    private String accion;
+
+    @Column(name = "ip_origen") // Mapeo explícito
+    private String ipOrigen;
+
     private boolean revisada = false;
 }
-
