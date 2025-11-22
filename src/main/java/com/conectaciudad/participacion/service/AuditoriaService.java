@@ -10,4 +10,5 @@ public interface AuditoriaService {
     List<VotoDetailDTO> listarVotosPorProyecto(Long idProyecto);
     AlertaAuditoriaDTO registrarAlerta(AlertaAuditoriaDTO alertaDTO);
     List<AlertaAuditoriaDTO> listarAlertas();
+    List<AlertaAuditoriaDTO> verificarIntegridadDelSistema(String usuarioAuditor, String ipAuditor);
 }
