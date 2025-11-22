@@ -175,19 +175,31 @@ public class VotacionServiceImpl implements VotacionService {
 
     @Override
     public ResultadoVotacionDTO obtenerResultadosPorProyecto(Long idProyecto) {
+        // 1. Obtener info del proyecto
         ProyectoDto proyecto = proyectoClient.obtenerProyectoPorId(idProyecto);
 
-        // Solo mostramos resultados si el proyecto es público
-        if (!(proyecto.status().equals(EstadoProyecto.PUBLISHED)) &&
-                !(proyecto.status().equals(EstadoProyecto.OPEN_FOR_VOTING)) &&
-                !(proyecto.status().equals(EstadoProyecto.VOTING_CLOSED))) {
-            // Opcional: permitir ver resultados parciales a admins, pero bloquear a público general
+        // 2. Validar si es público
+        // Usamos String para evitar problemas con Enums del otro grupo
+        String estado = proyecto.status();
+
+        boolean esPublico = "PUBLISHED".equalsIgnoreCase(estado) ||
+                "OPEN_FOR_VOTING".equalsIgnoreCase(estado) ||
+                "VOTING_CLOSED".equalsIgnoreCase(estado);
+
+        if (!esPublico) {
+            // ¡AQUÍ LANZAMOS LA EXCEPCIÓN!
+            throw new ProyectoNotAvailableException(
+                    "Los resultados no están disponibles públicamente. El proyecto se encuentra en estado: " + estado
+            );
         }
 
-        long votosAFavor = votacionRepository.countByProyectoIdAndDecisionTrue(idProyecto);
-        long votosEnContra = votacionRepository.countByProyectoIdAndDecisionFalse(idProyecto);
+        // 3. Conteo de votos (EXCLUYENDO FRAUDULENTOS)
+        long votosAFavor = votacionRepository.countByProyectoIdAndDecisionTrueAndFraudulentoFalse(idProyecto);
+        long votosEnContra = votacionRepository.countByProyectoIdAndDecisionFalseAndFraudulentoFalse(idProyecto);
+
         long total = votosAFavor + votosEnContra;
 
+        // 4. Cálculo de porcentajes
         double porcentajeAFavor = total > 0 ? (votosAFavor * 100.0 / total) : 0;
         double porcentajeEnContra = total > 0 ? (votosEnContra * 100.0 / total) : 0;
 

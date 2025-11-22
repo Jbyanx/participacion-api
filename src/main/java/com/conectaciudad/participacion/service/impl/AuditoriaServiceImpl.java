@@ -10,6 +10,8 @@ import com.conectaciudad.participacion.repository.AuditoriaVotoRepository;
 import com.conectaciudad.participacion.repository.VotacionRepository;
 import com.conectaciudad.participacion.service.AuditoriaService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuditoriaServiceImpl implements AuditoriaService {
-
+    private final Logger logger = LoggerFactory.getLogger(AuditoriaServiceImpl.class);
     private final AuditoriaVotoRepository auditoriaVotoRepository;
     private final AlertaAuditoriaRepository alertaAuditoriaRepository;
     private final VotacionRepository votacionRepository;
@@ -134,6 +136,14 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 
                 // Agregamos a la respuesta para que el auditor lo vea inmediatamente
                 alertasGeneradas.add(mapToDTO(alerta));
+
+                //MARCAR EL VOTO COMO FRAUDULENTO
+                if (!voto.isFraudulento()) { // Solo si no estaba marcado ya
+                    voto.setFraudulento(true);
+                    votacionRepository.save(voto); // Guardamos el estado "sucio"
+
+                    logger.info("Voto ID " + voto.getId() + " invalidado por fraude.");
+                }
             }
         }
 

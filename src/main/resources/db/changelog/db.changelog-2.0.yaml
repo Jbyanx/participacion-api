@@ -42,3 +42,16 @@ databaseChangeLog:
                   name: revisada
                   type: BOOLEAN
                   defaultValueBoolean: false
+  - changeSet:
+      id: 5-add-fraud-flag-votaciones
+      author: jabes
+      changes:
+        - addColumn:
+            tableName: votaciones
+            columns:
+              - column:
+                  name: fraudulento
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
