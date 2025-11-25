@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/auditorias")
 @RequiredArgsConstructor
 // BLOQUEO NIVEL CLASE: Solo Admins o curadores entran aquí
-@PreAuthorize("hasAnyRole('ADMINISTRADOR', 'CURADOR')")
+@PreAuthorize("hasAnyRole('ADMIN', 'CURATOR')")
 public class AuditoriaController {
 
     private final AuditoriaService auditoriaService;
