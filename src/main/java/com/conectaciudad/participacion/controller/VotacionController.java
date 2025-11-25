@@ -48,7 +48,7 @@ public class VotacionController {
         return ResponseEntity.created(location).body(respuesta);
     }
 
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'CURADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CURATOR')")
     @GetMapping("/{votacionId}")
     public ResponseEntity<VotoDetailDTO> verVoto(@PathVariable Long votacionId){
         return ResponseEntity.ok(votacionService.obtenerVoto(votacionId));
